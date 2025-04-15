@@ -37,7 +37,9 @@ def summarize():
 
     try:
         summary = summarize_with_flan_t5_api(text)
+        print(Summary)
         translated = GoogleTranslator(source='auto', target=lang).translate(summary)
+        print(translated)
 
         # Generate TTS
         tts = gTTS(text=translated, lang=lang)
