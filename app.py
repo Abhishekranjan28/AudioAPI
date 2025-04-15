@@ -45,7 +45,6 @@ def summarize():
         tts.save(temp_file.name)
 
         return jsonify({
-            "summary": summary,
             "translated": translated,
             "audio_url": f"/audio/{os.path.basename(temp_file.name)}"
         })
