@@ -36,9 +36,7 @@ def summarize():
         return jsonify({"error": "No text provided"}), 400
 
     try:
-        summary = summarize_with_flan_t5_api(text)
-        print(Summary)
-        translated = GoogleTranslator(source='auto', target=lang).translate(summary)
+        translated = GoogleTranslator(source='auto', target=lang).translate(text)
         print(translated)
 
         # Generate TTS
