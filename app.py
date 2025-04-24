@@ -27,7 +27,7 @@ def summarize():
         return jsonify({"error": "No text provided"}), 400
 
     try:
-        prompt = f"Summarize the following text in 50 words {lang}:\n{text}"
+        prompt = f"Summarize the following text in 50 words in {lang} language: The text is \n{text}"
         response = model.generate_content(prompt)
         summary = response.text.strip()
         
