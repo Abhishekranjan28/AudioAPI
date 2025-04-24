@@ -18,31 +18,34 @@ model = genai.GenerativeModel("gemini-1.5-flash")
 app = Flask(__name__)
 CORS(app)
 
-# Voice mapping for various languages
 language_to_voice = {
-    "en": "en-US-JennyNeural",  # English
-    "es": "es-ES-HelenaNeural",  # Spanish
-    "fr": "fr-FR-DeniseNeural",  # French
-    "de": "de-DE-KatjaNeural",   # German
-    "it": "it-IT-ElsaNeural",    # Italian
-    "pt": "pt-PT-DianaNeural",   # Portuguese
-    "ru": "ru-RU-DariyaNeural",  # Russian
-    "ja": "ja-JP-NanamiNeural",  # Japanese
-    "ko": "ko-KR-SunHiNeural",   # Korean
-    "zh": "zh-CN-XiaoyiNeural",  # Chinese (Simplified)
-    "hi": "hi-IN-MadhurNeural",  # Hindi
-    "ar": "ar-AR-ZakiNeural",    # Arabic
-    "tr": "tr-TR-MuzafferNeural",# Turkish
-    "pl": "pl-PL-AgnieszkaNeural", # Polish
-    "nl": "nl-NL-CoenNeural",    # Dutch
-    "sv": "sv-SE-EmiliaNeural",  # Swedish
-    "no": "no-NO-KristineNeural",# Norwegian
-    "fi": "fi-FI-NikoNeural",    # Finnish
-    "da": "da-DK-BirgitteNeural",# Danish
-    "cs": "cs-CZ-AdamNeural",    # Czech
+    "en": "en-US-JennyNeural",       # English
+    "es": "es-ES-HelenaNeural",      # Spanish
+    "fr": "fr-FR-DeniseNeural",      # French
+    "de": "de-DE-KatjaNeural",       # German
+    "it": "it-IT-ElsaNeural",        # Italian
+    "pt": "pt-PT-DianaNeural",       # Portuguese
+    "ru": "ru-RU-DariyaNeural",      # Russian
+    "ja": "ja-JP-NanamiNeural",      # Japanese
+    "ko": "ko-KR-SunHiNeural",       # Korean
+    "zh": "zh-CN-XiaoyiNeural",      # Chinese (Simplified)
+    "hi": "hi-IN-MadhurNeural",      # Hindi
+    "ar": "ar-AR-ZakiNeural",        # Arabic
+    "tr": "tr-TR-MuzafferNeural",    # Turkish
+    "pl": "pl-PL-AgnieszkaNeural",   # Polish
+    "nl": "nl-NL-CoenNeural",        # Dutch
+    "sv": "sv-SE-EmiliaNeural",      # Swedish
+    "no": "no-NO-KristineNeural",    # Norwegian
+    "fi": "fi-FI-NikoNeural",        # Finnish
+    "da": "da-DK-BirgitteNeural",    # Danish
+    "cs": "cs-CZ-AdamNeural",        # Czech
+    "te": "te-IN-MohanNeural",       # Telugu
+    "ta": "ta-IN-ValluvarNeural",    # Tamil
+    "bn": "bn-IN-TanishaaNeural",    # Bengali (India)
+    "mr": "mr-IN-AarohiNeural",      # Marathi
+    "ml": "ml-IN-MidhunNeural",      # Malayalam
 }
 
-# Default to English voice if no mapping is found
 def get_voice_for_language(lang):
     return language_to_voice.get(lang, "en-US-JennyNeural")
 
@@ -67,11 +70,9 @@ def summarize():
 
         print(summary)
 
-        # Temp file for audio
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
         temp_file.close()
 
-        # Run async TTS generation
         asyncio.run(generate_tts(summary, lang, temp_file.name))
 
         return jsonify({
