@@ -1,30 +1,21 @@
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from gtts import gTTS
-from deep_translator import GoogleTranslator
-import requests
 import tempfile
 import os
+import google.generativeai as genai
+from dotenv import load_dotenv
+load_dotenv()
+
+api_key = os.environ.get("GEMINI_API_KEY")
+if not api_key:
+    raise ValueError("GEMINI_API_KEY not set in environment variables")
+
+genai.configure(api_key=api_key)
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 app = Flask(__name__)
 CORS(app)
-
-HUGGINGFACE_API_TOKEN = "your_huggingface_token_here"
-API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-base"
-HEADERS = {"Authorization": f"Bearer {HUGGINGFACE_API_TOKEN}"}
-
-def summarize_with_flan_t5_api(text):
-    payload = {
-        "inputs": f"summarize: {text}",
-        "parameters": {"max_length": 150, "min_length": 30, "do_sample": False}
-    }
-    response = requests.post(API_URL, headers=HEADERS, json=payload)
-    result = response.json()
-
-    if isinstance(result, list) and "generated_text" in result[0]:
-        return result[0]["generated_text"]
-    else:
-        raise ValueError("Invalid response from Hugging Face API")
 
 @app.route('/summarize', methods=['POST'])
 def summarize():
@@ -36,16 +27,16 @@ def summarize():
         return jsonify({"error": "No text provided"}), 400
 
     try:
-        translated = GoogleTranslator(source='auto', target=lang).translate(text)
-        print(translated)
-
-        # Generate TTS
-        tts = gTTS(text=translated, lang=lang)
+        prompt = f"Summarize the following text in 50 words {lang}:\n{text}"
+        response = model.generate_content(prompt)
+        summary = response.text.strip()
+        
+        tts = gTTS(text=summary, lang=lang)
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
         tts.save(temp_file.name)
 
         return jsonify({
-            "translated": translated,
+            "translated": summary,
             "audio_url": f"/audio/{os.path.basename(temp_file.name)}"
         })
 
