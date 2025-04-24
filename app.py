@@ -30,6 +30,8 @@ def summarize():
         prompt = f"Summarize the following text in 50 words in {lang} language: The text is \n{text}"
         response = model.generate_content(prompt)
         summary = response.text.strip()
+
+        print(summary)
         
         tts = gTTS(text=summary, lang=lang)
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
