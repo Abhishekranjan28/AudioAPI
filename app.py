@@ -58,22 +58,23 @@ async def generate_tts(text, lang_code, output_path):
 def summarize():
     data = request.json
     text = data.get("text")
-    lang = data.get("lang", "en")
+    lang_code = data.get("lang_code", "en")
+    lang_name = data.get("lang_name", "English")
 
     if not text:
         return jsonify({"error": "No text provided"}), 400
 
     try:
-        prompt = f"Summarize the following text in 50 words in {lang} language: The text is \n{text}"
+        prompt = f"Summarize the following text in 50 words in {lang_name} language:\n{text}"
         response = model.generate_content(prompt)
         summary = response.text.strip()
 
-        print(summary)
+        print(f"Summary: {summary}")
 
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
         temp_file.close()
 
-        asyncio.run(generate_tts(summary, lang, temp_file.name))
+        asyncio.run(generate_tts(summary, lang_code, temp_file.name))
 
         return jsonify({
             "translated": summary,
@@ -82,6 +83,7 @@ def summarize():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/audio/<filename>')
 def get_audio(filename):
