@@ -65,7 +65,14 @@ def summarize():
         return jsonify({"error": "No text provided"}), 400
 
     try:
-        prompt = f"Summarize the following text in 50 words in {lang_name} language:\n{text}"
+        commands_text = ""
+        commands_path = "Commands.txt"
+        if os.path.exists(commands_path):
+            with open(commands_path, "r", encoding="utf-8") as f:
+                commands_text = f.read().strip()
+
+        prompt = f"{commands_text}\nSummarize the following text in 50 words in {lang_name} language:\n{text}"
+
         response = model.generate_content(prompt)
         summary = response.text.strip()
 
